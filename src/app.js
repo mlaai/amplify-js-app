@@ -20,3 +20,32 @@ MutationButton.addEventListener('click', (evt) => {
     MutationResult.innerHTML += `<p>${evt.data.createTodo.name} - ${evt.data.createTodo.description}</p>`
   })
 });
+
+// other imports
+import { listTodos } from './graphql/queries'
+
+const QueryResult = document.getElementById('QueryResult');
+
+async function getData() {
+  QueryResult.innerHTML = `QUERY RESULTS`;
+  API.graphql(graphqlOperation(listTodos)).then((evt) => {
+    evt.data.listTodos.items.map((todo, i) => 
+    QueryResult.innerHTML += `<p>${todo.name} - ${todo.description}</p>`
+    );
+  })
+}
+
+getData();
+
+// other imports
+import { onCreateTodo } from './graphql/subscriptions'
+
+const SubscriptionResult = document.getElementById('SubscriptionResult');
+
+API.graphql(graphqlOperation(onCreateTodo)).subscribe({
+  next: (evt) =>{
+    SubscriptionResult.innerHTML = `SUBSCRIPTION RESULTS`
+    const todo = evt.value.data.onCreateTodo;
+    SubscriptionResult.innerHTML += `<p>${todo.name} - ${todo.description}</p>`
+  }
+});
